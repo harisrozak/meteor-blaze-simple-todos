@@ -11,8 +11,14 @@ Meteor.methods({
   "task.insert": function (text, user = null) {
     check(text, String);
 
-    const userId = user ? user._id : this.userId;
+    let userId = this.userId;
 
+    // If the user param is defined.
+	if (user && typeof user._id !== "undefined") {
+      userId = user._id;
+    }
+
+    // Must be an authorized user.
     if (!userId) {
       throw new Meteor.Error("Not authorized.");
     }
@@ -32,8 +38,16 @@ Meteor.methods({
   "task.remove": function (taskId) {
     check(taskId, String);
 
+    // Must be an authorized user.
     if (!this.userId) {
       throw new Meteor.Error("Not authorized.");
+    }
+
+    const task = TasksCollection.findOne({ _id: taskId, userId: this.userId });
+
+    // Must be an authorized user.
+    if (!task) {
+      throw new Meteor.Error("Access denied.");
     }
 
     TasksCollection.remove(taskId);
@@ -49,8 +63,16 @@ Meteor.methods({
     check(taskId, String);
     check(isChecked, Boolean);
 
+    // Must be an authorized user.
     if (!this.userId) {
       throw new Meteor.Error("Not authorized.");
+    }
+
+    const task = TasksCollection.findOne({ _id: taskId, userId: this.userId });
+
+    // Must be an authorized user.
+    if (!task) {
+      throw new Meteor.Error("Access denied.");
     }
 
     TasksCollection.update(taskId, {

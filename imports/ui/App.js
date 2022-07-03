@@ -24,6 +24,12 @@ const getTasksFilter = () => {
  */
 Template.mainContainer.onCreated(function () {
   this.state = new ReactiveDict();
+
+  const handler = Meteor.subscribe('tasks');
+
+  Tracker.autorun(() => {
+    this.state.set("isLoading", !handler.ready());
+  });
 });
 
 /**
@@ -68,6 +74,9 @@ Template.mainContainer.helpers({
   userData: function () {
     return getUser();
   },
+  isLoading: function () {
+	return Template.instance().state.get("isLoading");
+  } 
 });
 
 /**
