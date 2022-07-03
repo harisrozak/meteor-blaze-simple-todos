@@ -1,9 +1,10 @@
 import { Template } from "meteor/templating";
-import { TasksCollection } from "../api/TasksCollection";
+import { TasksCollection } from "../db/TasksCollection";
 import { ReactiveDict } from "meteor/reactive-dict";
 
 import "./App.html";
 import "./Task.js";
+import "./TaskForm.js";
 import "./Login.js";
 
 const getUser = () => Meteor.user();
@@ -17,10 +18,18 @@ const getTasksFilter = () => {
   return { userFilter, pendingOnlyFilter };
 };
 
+/**
+ * OnCreated.
+ * Add variable to template instance (this).
+ */
 Template.mainContainer.onCreated(function () {
   this.state = new ReactiveDict();
 });
 
+/**
+ * Helpers.
+ * Passing variables to template.
+ */
 Template.mainContainer.helpers({
   tasks: function () {
     const instance = Template.instance();
@@ -61,6 +70,10 @@ Template.mainContainer.helpers({
   },
 });
 
+/**
+ * Events.
+ * Handle template events.
+ */
 Template.mainContainer.events({
   "click #hide-completed-button": function (event, instance) {
     // Undefined means false.
@@ -71,27 +84,5 @@ Template.mainContainer.events({
   },
   "click .user": function (event, instance) {
     Meteor.logout();
-  },
-});
-
-Template.taskForm.events({
-  "submit .task-form": function (event, instance) {
-    // Prevent default browser form submit.
-    event.preventDefault();
-
-    // Get value from element
-    const target = event.target;
-    const taskText = target.taskText.value;
-    const user = getUser();
-
-    // Insert a task into collection.
-    TasksCollection.insert({
-      text: taskText,
-      userId: user._id,
-      createAt: new Date(),
-    });
-
-    // Clear form.
-    target.taskText.value = "";
   },
 });

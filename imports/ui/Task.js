@@ -1,15 +1,16 @@
 import { Template } from "meteor/templating";
-import { TasksCollection } from "../api/TasksCollection";
+import { TasksCollection } from "../db/TasksCollection";
 import "./Task.html";
 
+/**
+ * Events.
+ * Handle template events.
+ */
 Template.task.events({
   "click .toggle-checked": function (event, instance) {
-    // Set the checked property to the opposite of its current value.
-    TasksCollection.update(instance.data._id, {
-      $set: { isChecked: !instance.data.isChecked },
-    });
+    Meteor.call("task.setIsChecked", instance.data._id, !instance.data.isChecked);
   },
   "click .delete-task": function (event, instance) {
-    TasksCollection.remove(instance.data._id);
+	Meteor.call("task.remove", instance.data._id);
   },
 });
