@@ -2,19 +2,33 @@ import { check } from "meteor/check";
 import { TasksCollection } from "../db/TasksCollection";
 
 Meteor.methods({
-  "task.insert": function (text) {
+  /**
+   * Insert task
+   *
+   * @param {String} text
+   * @param {Object} user
+   */
+  "task.insert": function (text, user = null) {
     check(text, String);
 
-    if (!this.userId) {
+    const userId = user ? user._id : this.userId;
+
+    if (!userId) {
       throw new Meteor.Error("Not authorized.");
     }
 
     TasksCollection.insert({
       text: text,
       createAt: new Date(),
-      userId: this.userId,
+      userId: userId,
     });
   },
+
+  /**
+   * Remove task
+   *
+   * @param {String} taskId
+   */
   "task.remove": function (taskId) {
     check(taskId, String);
 
@@ -24,6 +38,13 @@ Meteor.methods({
 
     TasksCollection.remove(taskId);
   },
+
+  /**
+   * Set isChecked value
+   *
+   * @param {String} taskId
+   * @param {Boolean} isChecked
+   */
   "task.setIsChecked": function (taskId, isChecked) {
     check(taskId, String);
     check(isChecked, Boolean);

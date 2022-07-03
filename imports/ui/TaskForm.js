@@ -1,8 +1,5 @@
 import { Template } from "meteor/templating";
-import { TasksCollection } from "../db/TasksCollection";
 import "./TaskForm.html";
-
-const getUser = () => Meteor.user();
 
 /**
  * Events.

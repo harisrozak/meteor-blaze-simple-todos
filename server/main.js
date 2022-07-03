@@ -3,13 +3,6 @@ import { Accounts } from "meteor/accounts-base";
 import { TasksCollection } from "../imports/db/TasksCollection";
 import "../imports/api/TasksMethods";
 
-const insertTask = (taskTest, user) =>
-  TasksCollection.insert({
-    text: taskTest,
-    userId: user._id,
-    createAt: new Date(),
-  });
-
 const SEED_USERNAME = "meteorite";
 const SEED_PASSWORD = "password";
 
@@ -22,8 +15,9 @@ Meteor.startup(() => {
   }
 
   const user = Accounts.findUserByUsername(SEED_USERNAME);
+  const taskCount = TasksCollection.find().count();
 
-  if (TasksCollection.find().count() === 0) {
+  if (taskCount === 0) {
     [
       "First Task",
       "Second Task",
@@ -32,6 +26,6 @@ Meteor.startup(() => {
       "Fifth Task",
       "Sixth Task",
       "Seventh Task",
-    ].forEach(taskText => insertTask(taskText, user));
+    ].forEach(taskText => Meteor.call("task.insert", taskText, user));
   }
 });
