@@ -1,19 +1,48 @@
 <body>
-  {{> mainContainer}}
+	{{> mainContainer}}
 </body>
 
 <template name="mainContainer">
-  <div class="container">
-    <header>
-      <h1>Todo List</h1>
-    </header>
+	<div class="app">
+		<header>
+			<div class="app-bar">
+				<div class="app-header">
+					<h1>📝️ To Do List {{incompleteCount}}</h1>
+				</div>
+			</div>
+		</header>
 
-    <ul>
-      {{#each tasks}} {{> task}} {{/each}}
-    </ul>
-  </div>
+		<div class="main">
+			{{#if isUserLogged}}
+				<div class="user">
+					{{userData.username}}
+				</div>
+				{{> taskForm}}
+				<div class="filter">
+					<button id="hide-completed-button">
+						{{#if hideCompleted}}
+							Show All
+						{{else}}
+							Hide Completed
+						{{/if}}
+					</button>
+				</div>
+
+				<ul class="tasks">
+					{{#each tasks}} 
+						{{> task}} 
+					{{/each}}
+				</ul>
+			{{else}}
+				{{> login}}
+			{{/if}}
+		</div>
+	</div>
 </template>
 
-<template name="task">
-  <li>{{text}}</li>
+<template name="taskForm">
+	<form class="task-form">
+		<input type="text" name="taskText" placeholder="Type to add new tasks" />
+		<button type="submit">Add Task</button>
+	</form>
 </template>
